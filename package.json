@@ -1,7 +1,7 @@
 {
   "name": "mesto",
   "version": "0.0.1",
-  "description": "",
+  "description": "project 12, Mesto, server operation",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
