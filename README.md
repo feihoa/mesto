@@ -1,6 +1,6 @@
 # mesto
 
-Проектная работа 12, Mesto, работа сервера.
+Проектная работа 13, Mesto, работа сервера.
 
 * проект копируется командой git clone https://github.com/Maliiya/mesto.git
 * npm run start запускает сервер на localhost:3000; 
