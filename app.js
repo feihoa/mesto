@@ -18,11 +18,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
   useFindAndModify: false,
 
-});
+}).then().catch(() => { throw new Error(); });
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '5ec90b3e03da3ab39026fb73',
+    _id: '5ec9ada0da27d7745494241c',
   };
 
   next();

@@ -3,15 +3,26 @@ const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((users) => {
+      if (users !== null) {
+        res.send({ data: users });
+      } else {
+        res.status(404).send({ message: 'Not found' });
+      }
+    })
+    .catch(() => res.status(404).send({ message: 'Not found' }));
 };
-
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((user) => {
+      if (user !== null) {
+        res.send({ data: user });
+      } else {
+        res.status(404).send({ message: 'Not found' });
+      }
+    })
+    .catch(() => res.status(404).send({ message: 'Not found' }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -19,22 +30,32 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(500).send(err.message));
 };
 
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about })
-    .then((userinfo) => res.send({ data: userinfo }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findByIdAndUpdate(req.user._id, { name, about },
+    {
+      new: true,
+      runValidators: true,
+    })
+
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send(err.message));
 };
 
 module.exports.updateUserPic = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar })
-    .then((ava) => res.send({ data: ava }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findByIdAndUpdate(req.user._id, { avatar },
+    {
+      new: true,
+      runValidators: true,
+    })
+
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send(err.message));
 };
