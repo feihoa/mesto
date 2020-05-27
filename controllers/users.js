@@ -4,13 +4,13 @@ const User = require('../models/user');
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      if (users !== null) {
+      if (users.length !== 0) {
         res.send({ data: users });
       } else {
         res.status(404).send({ message: 'Not found' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'Not found' }));
+    .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 module.exports.getUser = (req, res) => {
@@ -22,7 +22,9 @@ module.exports.getUser = (req, res) => {
         res.status(404).send({ message: 'Not found' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'Not found' }));
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -30,7 +32,13 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send(err.message));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
 
 
@@ -44,7 +52,13 @@ module.exports.updateUser = (req, res) => {
     })
 
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send(err.message));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
 
 module.exports.updateUserPic = (req, res) => {
@@ -57,5 +71,11 @@ module.exports.updateUserPic = (req, res) => {
     })
 
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send(err.message));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
