@@ -1,10 +1,8 @@
  
 # Mesto
-======
 Project work 13, Mesto, server operation.
 
 ## Installation
-======
 ```bash
 git clone https://github.com/Maliiya/mesto.git
 ```
@@ -12,7 +10,6 @@ git clone https://github.com/Maliiya/mesto.git
 `GET` | `POST` | `DELETE` | `PUT` | `PATCH`
 
 ## Usage
-======
 ```bash
 npm i
 ```
