@@ -27,14 +27,14 @@ npm run dev (hot reload)
 
 
 **Requests:**
-======
+----
 ## * GET /cards
 
 ### **Success Response:**
 
   * **Code:** 200 <br />
     **Content:** `{ data : {} }`
-----
+======
 
 ### **Error Response:**
 
@@ -51,7 +51,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : {} }`
-----
+======
 
 ### **Error Response:**
 
@@ -68,7 +68,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : user }`
-----
+======
 
 ### **Error Response:**
 
@@ -88,7 +88,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : user }`
-----
+======
 
 ### **Error Response:**
 
@@ -108,7 +108,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : card }`
-----
+======
 
 ### **Error Response:**
 
@@ -128,7 +128,7 @@ npm run dev (hot reload)
 
   * **Code:** 201 <br />
     **Content:** `{ data : user }`
-----
+======
 
 ### **Error Response:**
 
@@ -145,10 +145,10 @@ npm run dev (hot reload)
 
   * **Code:** 201 <br />
     **Content:** `{ data : user }`
-    ======
+   
   * **Code:** 401 <br />
     **Content:** cookie (jwt)
-----
+======
 
 ### **Error Response:**
 
@@ -165,7 +165,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : card }`
-----
+======
 
 ### **Error Response:**
 
@@ -188,7 +188,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : card }`
-----
+======
 
 ### **Error Response:**
 
@@ -208,7 +208,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : card }`
-----
+======
 
 ### **Error Response:**
 
@@ -228,7 +228,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : user }`
-----
+======
 
 ### **Error Response:**
 
@@ -248,7 +248,7 @@ npm run dev (hot reload)
 
   * **Code:** 200 <br />
     **Content:** `{ data : user }`
-----
+======
 
 ### **Error Response:**
 
