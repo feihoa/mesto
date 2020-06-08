@@ -17,7 +17,9 @@ const { PORT = 3000 } = process.env;
 
 require('dotenv').config();
 
-console.log(process.env.NODE_ENV);
+const { NODE_ENV = 'development' } = process.env;
+console.log(NODE_ENV);
+
 const app = express();
 
 app.use(cookieParser());

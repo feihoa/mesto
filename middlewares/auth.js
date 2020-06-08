@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(req.cookies.jwt, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
-    handleAuthError(res);
+    return handleAuthError(res);
   }
 
   req.user = payload;
