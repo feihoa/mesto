@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const isEmail = require('validator/lib/isEmail');
+const isURL = require('validator/lib/isURL');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,14 +19,17 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-
+    validate: {
+      validator: isURL,
+      message: 'Неправильный формат ссылки',
+    },
   },
   email: {
     type: String,
     required: true,
     unique: true,
     validate: {
-      validator: (v) => isEmail(v),
+      validator: isEmail,
       message: 'Неправильный формат почты',
     },
   },
@@ -35,8 +39,6 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
-
-userSchema.path('avatar').validate((val) => /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(val), 'Invalid URL.');
 
 userSchema.methods.omitPrivate = function omitPrivate() {
   const obj = this.toObject();

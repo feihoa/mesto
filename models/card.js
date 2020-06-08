@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const isURL = require('validator/lib/isURL');
+
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -10,7 +12,10 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-
+    validate: {
+      validator: isURL,
+      message: 'Неправильный формат ссылки',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +35,5 @@ const cardSchema = new mongoose.Schema({
 
   },
 });
-
-cardSchema.path('link').validate((val) => /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(val), 'Invalid URL.');
 
 module.exports = mongoose.model('card', cardSchema);

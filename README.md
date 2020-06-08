@@ -1,15 +1,28 @@
- 
 # Mesto
 Project work 13, Mesto, server operation.
+
+V 0.0.3
 
 ## Installation
 ```bash
 git clone https://github.com/Maliiya/mesto.git
 ```
-### Method:
-`GET` | `POST` | `DELETE` | `PUT` | `PATCH`
+
 
 ## Usage
+
+MongoDB is required
+
+.env is required
+example:
+```bash
+//.env
+
+NODE_ENV=production   //NODE_ENV=development
+JWT_SECRET=12345
+```
+
+
 ```bash
 npm i
 ```
@@ -21,6 +34,10 @@ npm run start
 ```bash
 npm run dev (hot reload)
 ```
+
+
+### Method:
+`GET` | `POST` | `DELETE` | `PUT` | `PATCH`
 
 
 **Requests:**

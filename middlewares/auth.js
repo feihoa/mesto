@@ -6,18 +6,17 @@ const handleAuthError = (res) => {
     .send({ message: 'Необходима авторизация' });
 };
 
-// const extractBearerToken = (header) => {
-//   return header.replace('Bearer ', '');
-// };
 
 module.exports = (req, res, next) => {
+  const { NODE_ENV, JWT_SECRET } = process.env;
+
   if (!req.cookies.jwt) {
-    handleAuthError(res);
+    return handleAuthError(res);
   }
   let payload;
 
   try {
-    payload = jwt.verify(req.cookies.jwt, 'secret');
+    payload = jwt.verify(req.cookies.jwt, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
     handleAuthError(res);
   }
@@ -25,4 +24,5 @@ module.exports = (req, res, next) => {
   req.user = payload;
 
   next();
+  return true;
 };

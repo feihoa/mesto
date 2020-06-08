@@ -1,3 +1,6 @@
+/* eslint consistent-return: ["error", { "treatUndefinedAsUnspecified": true }] */
+
+
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const ForbiddenError = require('../errors/forbidden-err');
@@ -32,15 +35,15 @@ module.exports.deleteCard = async (req, res) => {
     if (card.owner.toString() === req.user._id) {
       try {
         const removedCard = await card.remove();
-        res.ststus(200).send({ data: removedCard });
+        return res.status(200).send({ data: removedCard });
       } catch (err) {
-        res.status(500).send({ message: err.message });
+        throw new Error();
       }
     } else {
       throw new ForbiddenError('Доступ запрещен');
     }
   } catch (err) {
-    res.status(err.statusCode || 500).send({ message: err.message });
+    return res.status(err.statusCode || 500).send({ message: err.message });
   }
 };
 
@@ -53,7 +56,7 @@ module.exports.likeCard = async (req, res) => {
       .orFail(() => { throw new NotFoundError('Нет карточки с таким id'); });
     res.status(200).send({ data: card });
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.status(err.statusCode || 500).send({ message: err.message });
   }
 };
 
