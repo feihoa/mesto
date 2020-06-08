@@ -13,7 +13,7 @@ git clone https://github.com/Maliiya/mesto.git
 
 MongoDB is required
 
-.env is required
+.env is required,
 example:
 ```bash
 //.env
