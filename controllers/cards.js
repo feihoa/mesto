@@ -21,8 +21,9 @@ module.exports.createCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: err.message });
+    } else {
+      res.status(err.statusCode || 500).send({ message: err.message });
     }
-    res.status(err.statusCode || 500).send({ message: err.message });
   }
 };
 
