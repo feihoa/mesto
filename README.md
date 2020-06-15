@@ -7,7 +7,6 @@ http://mestoproject.tk
 https://mestoproject.tk
 
 http://84.201.145.183/
-https://84.201.145.183/
 
 
 
