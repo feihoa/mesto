@@ -1,7 +1,15 @@
 # Mesto
 Project work 13, Mesto, server operation.
 
-V 0.0.3
+V 0.0.4
+
+http://mestoproject.tk
+https://mestoproject.tk
+
+http://84.201.145.183/
+https://84.201.145.183/
+
+
 
 ## Installation
 ```bash
