@@ -1,15 +1,24 @@
-/* eslint no-console: ["error", { allow: ["log"] }] */
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const { celebrate, Joi, isCelebrate } = require('celebrate');
+const { errors } = require('celebrate');
+
+const helmet = require('helmet');
+
+const rateLimit = require('express-rate-limit');
+const { validateSignIn, validateSignUp } = require('./celebrateSchemas');
 
 
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+const NotFoundError = require('./errors/not-found-err');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+const router = require('./routes/index');
 
 const { requestLogger, errorLogger } = require('./middlewares/Logger');
 
@@ -19,7 +28,7 @@ const auth = require('./middlewares/auth');
 
 require('dotenv').config();
 
-const { NODE_ENV = 'production' } = process.env;
+const { NODE_ENV = 'development' } = process.env;
 console.log(NODE_ENV);
 
 const app = express();
@@ -37,76 +46,42 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(requestLogger);
+app.use(helmet());
+app.use(limiter);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 // log in
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-  headers: Joi.object().keys({
-    'content-type': 'application/json',
-  }).unknown(),
-}), login);
+app.post('/signin', validateSignIn, login);
 
 // create user
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().min(5),
-  }),
-  headers: Joi.object().keys({
-    'content-type': 'application/json',
-  }).unknown(),
-}), createUser);
+app.post('/signup', validateSignUp, createUser);
 
 app.use(auth);
 
-app.use('/users', celebrate({
-  headers: Joi.object().keys({
-    'content-type': 'application/json',
-  }).unknown(),
-  cookies: Joi.object().keys({
-    jwt: Joi.string().required(),
-  }),
-}), usersRouter);
+app.use(router);
 
-app.use('/cards', celebrate({
-  headers: Joi.object().keys({
-    'content-type': 'application/json',
-  }).unknown(),
-  cookies: Joi.object().keys({
-    jwt: Joi.string().required(),
-  }),
-}), cardsRouter);
-
-app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+app.use('*', () => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 app.use(errorLogger);
 
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
-  if (isCelebrate(err)) {
-    res
-      .status(400)
-      .send({
-        message: err.message,
-      });
-  } else {
-    res
-      .status(statusCode)
-      .send({
-        message: statusCode === 500
-          ? 'На сервере произошла ошибка'
-          : message,
-      });
-  }
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
   next();
 });
 

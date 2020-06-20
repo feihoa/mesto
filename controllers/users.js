@@ -6,10 +6,11 @@ const ForbiddenError = require('../errors/forbidden-err');
 const ValidationError = require('../errors/validation-err');
 const ConflictError = require('../errors/conflict-err');
 
+
 const User = require('../models/user');
 
 
-module.exports.getUsers = async (req, res, next) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     res.send({ data: users });
@@ -18,7 +19,7 @@ module.exports.getUsers = async (req, res, next) => {
   }
 };
 
-module.exports.getUser = async (req, res, next) => {
+const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
       .orFail(() => { throw new NotFoundError('Нет пользователя с таким id'); });
@@ -28,7 +29,7 @@ module.exports.getUser = async (req, res, next) => {
   }
 };
 
-module.exports.createUser = async (req, res, next) => {
+const createUser = async (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -41,7 +42,7 @@ module.exports.createUser = async (req, res, next) => {
       const user = await User.create({
         name, about, avatar, email, password: hash,
       });
-      res.status(201).send({ data: user.omitPrivate() });
+      res.send({ data: user.omitPrivate() });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
@@ -57,7 +58,7 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 
-module.exports.updateUser = async (req, res, next) => {
+const updateUser = async (req, res, next) => {
   const { name, about } = req.body;
   try {
     try {
@@ -66,7 +67,7 @@ module.exports.updateUser = async (req, res, next) => {
           new: true,
           runValidators: true,
         });
-      res.status(200).send({ data: userUpdated });
+      res.send({ data: userUpdated });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
@@ -81,7 +82,7 @@ module.exports.updateUser = async (req, res, next) => {
   }
 };
 
-module.exports.updateUserPic = async (req, res, next) => {
+const updateUserPic = async (req, res, next) => {
   const { avatar } = req.body;
   try {
     try {
@@ -90,7 +91,7 @@ module.exports.updateUserPic = async (req, res, next) => {
           new: true,
           runValidators: true,
         });
-      res.status(200).send({ data: userUpdated });
+      res.send({ data: userUpdated });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
@@ -105,29 +106,29 @@ module.exports.updateUserPic = async (req, res, next) => {
   }
 };
 
-module.exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
   const { NODE_ENV, JWT_SECRET } = process.env;
   try {
-    try {
-      const { email, password } = req.body;
+    const { email, password } = req.body;
 
-      const user = await User.findUserByCredentials(email, password);
+    const user = await User.findUserByCredentials(email, password);
 
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-      );
-      res.status(201);
-      res.cookie('jwt', token, {
-        expire: '7d',
-        httpOnly: true,
-        sameSite: 'strict',
-      })
-        .send({ data: user.omitPrivate() });
-    } catch (err) {
-      res.status(401).send({ message: err.message });
-    }
+    const token = jwt.sign(
+      { _id: user._id },
+      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+    );
+    res.status(201);
+    res.cookie('jwt', token, {
+      expire: '7d',
+      httpOnly: true,
+      sameSite: 'strict',
+    })
+      .send({ data: user.omitPrivate() });
   } catch (err) {
     next(err);
   }
+};
+
+module.exports = {
+  getUsers, getUser, login, updateUserPic, createUser, updateUser,
 };
