@@ -6,7 +6,6 @@ const {
   getUsers, getUser, updateUser, updateUserPic,
 } = require('../controllers/users');
 
-
 // get all users
 router.get('/', getUsers);
 
@@ -18,6 +17,5 @@ router.patch('/me', validateMe, updateUser);
 
 // change avatar
 router.patch('/me/avatar', validateAvatar, updateUserPic);
-
 
 module.exports = router;

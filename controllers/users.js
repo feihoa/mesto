@@ -6,9 +6,7 @@ const ForbiddenError = require('../errors/forbidden-err');
 const ValidationError = require('../errors/validation-err');
 const ConflictError = require('../errors/conflict-err');
 
-
 const User = require('../models/user');
-
 
 const getUsers = async (req, res, next) => {
   try {
@@ -56,7 +54,6 @@ const createUser = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const updateUser = async (req, res, next) => {
   const { name, about } = req.body;

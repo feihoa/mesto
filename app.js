@@ -10,7 +10,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { validateSignIn, validateSignUp } = require('./celebrateSchemas');
 
-
 const NotFoundError = require('./errors/not-found-err');
 
 const limiter = rateLimit({

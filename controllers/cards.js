@@ -4,7 +4,6 @@ const ForbiddenError = require('../errors/forbidden-err');
 const СastError = require('../errors/cast-err');
 const ValidationError = require('../errors/validation-err');
 
-
 const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
@@ -56,7 +55,6 @@ const deleteCard = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const likeCard = async (req, res, next) => {
   try {

@@ -4,7 +4,6 @@ const isEmail = require('validator/lib/isEmail');
 const isURL = require('validator/lib/isURL');
 const AuthorizationError = require('../errors/authorization-err');
 
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
