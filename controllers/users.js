@@ -8,53 +8,54 @@ const ConflictError = require('../errors/conflict-err');
 
 const User = require('../models/user');
 
-
-module.exports.getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     res.send({ data: users });
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    next(err);
   }
 };
 
-module.exports.getUser = async (req, res) => {
+const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId)
       .orFail(() => { throw new NotFoundError('Нет пользователя с таким id'); });
     res.send({ data: user });
   } catch (err) {
-    res.status(err.statusCode || 500).send({ message: err.message });
+    next(err);
   }
 };
 
-module.exports.createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   try {
+    if (password < 8) {
+      throw new ValidationError('Длина пароля недостаточна');
+    }
     try {
-      const {
-        name, about, avatar, email, password,
-      } = req.body;
       const hash = await bcrypt.hash(password, 10);
       const user = await User.create({
         name, about, avatar, email, password: hash,
       });
-      res.status(201).send({ data: user.omitPrivate() });
+      res.send({ data: user.omitPrivate() });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
       } else if (err.name === 'MongoError') {
-        throw new ConflictError('Такой e-mail уже сущетсвует');
+        throw new ConflictError('Такой e-mail уже существует');
       } else {
-        throw new Error();
+        next(err);
       }
     }
   } catch (err) {
-    res.status(err.statusCode || 500).send({ message: err.message });
+    next(err);
   }
 };
 
-
-module.exports.updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   const { name, about } = req.body;
   try {
     try {
@@ -63,7 +64,7 @@ module.exports.updateUser = async (req, res) => {
           new: true,
           runValidators: true,
         });
-      res.status(200).send({ data: userUpdated });
+      res.send({ data: userUpdated });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
@@ -74,11 +75,11 @@ module.exports.updateUser = async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(err.statusCode || 500).send({ message: err.message });
+    next(err);
   }
 };
 
-module.exports.updateUserPic = async (req, res) => {
+const updateUserPic = async (req, res, next) => {
   const { avatar } = req.body;
   try {
     try {
@@ -87,7 +88,7 @@ module.exports.updateUserPic = async (req, res) => {
           new: true,
           runValidators: true,
         });
-      res.status(200).send({ data: userUpdated });
+      res.send({ data: userUpdated });
     } catch (err) {
       if (err.name === 'ValidationError') {
         throw new ValidationError(err.message);
@@ -98,13 +99,12 @@ module.exports.updateUserPic = async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(err.statusCode || 500).send({ message: err.message });
+    next(err);
   }
 };
 
-module.exports.login = async (req, res) => {
+const login = async (req, res, next) => {
   const { NODE_ENV, JWT_SECRET } = process.env;
-
   try {
     const { email, password } = req.body;
 
@@ -118,9 +118,14 @@ module.exports.login = async (req, res) => {
     res.cookie('jwt', token, {
       expire: '7d',
       httpOnly: true,
+      sameSite: 'strict',
     })
       .send({ data: user.omitPrivate() });
   } catch (err) {
-    res.status(401).send({ message: err.message });
+    next(err);
   }
+};
+
+module.exports = {
+  getUsers, getUser, login, updateUserPic, createUser, updateUser,
 };

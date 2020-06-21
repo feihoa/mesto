@@ -1,19 +1,29 @@
-/* eslint no-console: ["error", { allow: ["log"] }] */
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+const { errors } = require('celebrate');
 
+const helmet = require('helmet');
+
+const rateLimit = require('express-rate-limit');
+const { validateSignIn, validateSignUp } = require('./celebrateSchemas');
+
+const NotFoundError = require('./errors/not-found-err');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+const router = require('./routes/index');
+
+const { requestLogger, errorLogger } = require('./middlewares/Logger');
 
 const { createUser, login } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
-
-const { PORT = 3000 } = process.env;
 
 require('dotenv').config();
 
@@ -34,20 +44,44 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 });
 
+app.use(requestLogger);
+app.use(helmet());
+app.use(limiter);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
+// log in
+app.post('/signin', validateSignIn, login);
+
+// create user
+app.post('/signup', validateSignUp, createUser);
 
 app.use(auth);
 
-app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
+app.use(router);
 
-app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+app.use('*', () => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
+app.use(errorLogger);
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
 });
+
+module.exports = app;
