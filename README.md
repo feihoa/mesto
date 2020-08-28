@@ -3,13 +3,6 @@ Project work 15, Mesto, server operation.
 
 V 0.0.4
 
-http://mestoproject.tk
-https://mestoproject.tk
-
-http://84.201.145.183/
-
-
-
 ## Installation
 ```bash
 git clone https://github.com/Maliiya/mesto.git
