@@ -5,7 +5,7 @@ V 0.0.4
 
 ## Installation
 ```bash
-git clone https://github.com/Maliiya/mesto.git
+git clone https://github.com/feihoa/mesto.git
 ```
 
 
